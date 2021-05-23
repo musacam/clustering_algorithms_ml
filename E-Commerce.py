@@ -37,10 +37,10 @@ ax.set_xlabel('Clusters')
 ax.set_ylabel('Inertia')
 
 # Annotate arrow
-ax.annotate('Possible Elbow Point', xy=(3, 140000), xytext=(3, 50000), xycoords='data',          
+ax.annotate('Possible Elbow Point', xy=(2, 600000), xytext=(3, 1200000), xycoords='data',          
              arrowprops=dict(arrowstyle='->', connectionstyle='arc3', color='blue', lw=2))
 
-ax.annotate('Possible Elbow Point', xy=(5, 80000), xytext=(5, 150000), xycoords='data',          
+ax.annotate('Possible Elbow Point', xy=(3, 400000), xytext=(4, 1000000), xycoords='data',          
              arrowprops=dict(arrowstyle='->', connectionstyle='arc3', color='blue', lw=2))
 
 plt.show()
@@ -83,16 +83,16 @@ plt.show()
 
 from sklearn.cluster import OPTICS 
 
-optics = OPTICS(eps=0.5, min_samples=12).fit(X)
+optics = OPTICS(eps=2, min_samples=15).fit(X)
 
-print(optics.labels_)
-print(optics.cluster_hierarchy_)
+print(len(optics.labels_))
+print(len(optics.cluster_hierarchy_))
 
 X['Labels'] = optics.labels_
 plt.figure(figsize=(12, 8))
-sns.scatterplot(X['Age'], X['Cost'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 5))
-plt.title('OPTICS with 5 Clusters')
+sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
+                palette=sns.color_palette('hls', 12))
+plt.title('OPTICS with 11 Clusters')
 plt.show()
 
 
@@ -104,7 +104,7 @@ affi = AffinityPropagation().fit(X)
 
 X['Labels'] = affi.labels_
 plt.figure(figsize=(12, 8))
-sns.scatterplot(X['Age'], X['Cost'], hue=X['Labels'], 
+sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
                 palette=sns.color_palette('hls', 12))
 plt.title('Affinity Prop with 12 Clusters')
 plt.show()
@@ -113,7 +113,7 @@ plt.show()
 
 from sklearn.cluster import AgglomerativeClustering 
 
-agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
+agglom = AgglomerativeClustering(n_clusters=5, linkDiscount='averDiscount').fit(X)
 
 X['Labels'] = agglom.labels_
 plt.figure(figsize=(12, 8))
@@ -129,12 +129,12 @@ from scipy.spatial import distance_matrix
 
 dist = distance_matrix(X, X)
 
-Z = hierarchy.linkage(dist, 'complete')
+Z = hierarchy.linkDiscount(dist, 'complete')
 
 plt.figure(figsize=(18, 50))
 dendro = hierarchy.dendrogram(Z, leaf_rotation=0, leaf_font_size=12, orientation='right')
 
-Z = hierarchy.linkage(dist, 'average')
+Z = hierarchy.linkDiscount(dist, 'averDiscount')
 plt.figure(figsize=(18, 50))
 dendro = hierarchy.dendrogram(Z, leaf_rotation=0, leaf_font_size =12, orientation = 'right')
 
@@ -176,7 +176,7 @@ mbk = MiniBatchKMeans(n_clusters=5).fit(X)
 
 X['Labels'] = mbk.labels_
 plt.figure(figsize=(12, 8))
-sns.scatterplot(X['Age'], X['Cost'], hue=X['Labels'], 
+sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
                 palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]))
 plt.title('Mini-batch with 5 clusters')
 plt.show()
@@ -189,7 +189,7 @@ brch = Birch(threshold=0.01, n_clusters=5).fit(X)
 
 X['Labels'] = brch.labels_
 plt.figure(figsize=(12, 8))
-sns.scatterplot(X['Age'], X['Cost'], hue=X['Labels'], 
+sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
                 palette=sns.color_palette('hls', 5))
 plt.title('Birch with 5 clusters')
 plt.show()
@@ -212,7 +212,7 @@ ax.set_title('KMeans with 5 Clusters')
 ##### Agglomerative Clustering #####
 ax = fig.add_subplot(222)
 
-agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
+agglom = AgglomerativeClustering(n_clusters=5, linkDiscount='averDiscount').fit(X)
 X['Labels'] = agglom.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
                 palette=sns.color_palette('hls', 5), s=60, ax=ax)
