@@ -1,27 +1,26 @@
-from sklearn.preprocessing import StandardScaler
+########### TO-DO LIST ###########
+# 1) Income ve score columnları değişecek
 
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-import os
 import warnings
 
 warnings.filterwarnings('ignore')
-print(os.listdir("./"))
 
-df = pd.read_csv("./Mall_Customers.csv")
-df.rename(index=str, columns={'Annual Income (k$)': 'Income',
-                              'Spending Score (1-100)': 'Score'}, inplace=True)
-print(df.head())
+strs = pd.read_csv("./Stars.csv")
+strs.rename(index=str, columns={'L': 'Luminosity',
+                                'R': 'Radius',
+                                'A_M': 'Absolute Magnitude'}, inplace=True)
 
-X = df.drop(['CustomerID', 'Gender'], axis=1)
-sns.pairplot(df.drop('CustomerID', axis=1), hue='Gender', aspect=1.5)
+X = strs.drop(['Color', 'Spectral_Class'], axis=1)
+# print(Y.head())
+sns.pairplot(data=X,hue="Type")
 plt.show()
+sns.barplot(x="Type",y="Temperature",data=strs)
 
-
-###################### KMeans Graph ######################
+###################### KMeans Graph - Elbow ######################
 
 from sklearn.cluster import KMeans
 
@@ -47,6 +46,8 @@ ax.annotate('Possible Elbow Point', xy=(5, 80000), xytext=(5, 150000), xycoords=
 plt.show()
 
 ###################### KMeans 3-5-10 ######################
+
+from sklearn.cluster import KMeans
 
 # 3 cluster
 km3 = KMeans(n_clusters=3).fit(X)
@@ -76,6 +77,36 @@ plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Income'], X['Score'], hue=X['Labels'], 
                 palette=sns.color_palette('hls', 10))
 plt.title('KMeans with 10 Clusters')
+plt.show()
+
+###################### OPTICS ######################
+
+from sklearn.cluster import OPTICS 
+
+optics = OPTICS(eps=0.5, min_samples=12).fit(X)
+
+print(optics.labels_)
+print(optics.cluster_hierarchy_)
+
+X['Labels'] = optics.labels_
+plt.figure(figsize=(12, 8))
+sns.scatterplot(X['Age'], X['Score'], hue=X['Labels'], 
+                palette=sns.color_palette('hls', 5))
+plt.title('OPTICS with 5 Clusters')
+plt.show()
+
+
+###################### Affinity Propagation ######################
+
+from sklearn.cluster import AffinityPropagation
+
+affi = AffinityPropagation().fit(X)
+
+X['Labels'] = affi.labels_
+plt.figure(figsize=(12, 8))
+sns.scatterplot(X['Age'], X['Score'], hue=X['Labels'], 
+                palette=sns.color_palette('hls', 12))
+plt.title('Affinity Prop with 12 Clusters')
 plt.show()
 
 ###################### Agglomerative ######################
@@ -162,7 +193,6 @@ sns.scatterplot(X['Age'], X['Score'], hue=X['Labels'],
                 palette=sns.color_palette('hls', 5))
 plt.title('Birch with 5 clusters')
 plt.show()
-
 
 ###################### ALL-IN-ONE ######################
 
