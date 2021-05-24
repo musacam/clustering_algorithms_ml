@@ -1,5 +1,4 @@
 ########### TO-DO LIST ###########
-# 1) Temperature ve Absolute Magnitude columnları değişecek
 
 import numpy as np 
 import pandas as pd
@@ -83,7 +82,7 @@ plt.show()
 
 from sklearn.cluster import OPTICS 
 
-optics = OPTICS(eps=0.5, min_samples=12).fit(X)
+optics = OPTICS(eps=0.5, min_samples=20).fit(X)
 
 print(optics.labels_)
 print(optics.cluster_hierarchy_)
@@ -91,8 +90,8 @@ print(optics.cluster_hierarchy_)
 X['Labels'] = optics.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 5))
-plt.title('OPTICS with 5 Clusters')
+                palette=sns.color_palette('hls', 3))
+plt.title('OPTICS with 3 Clusters')
 plt.show()
 
 
@@ -100,13 +99,15 @@ plt.show()
 
 from sklearn.cluster import AffinityPropagation
 
-affi = AffinityPropagation().fit(X)
+affi = AffinityPropagation(damping=0.9).fit(X)
+
+print(affi.cluster_centers_indices_)
 
 X['Labels'] = affi.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 12))
-plt.title('Affinity Prop with 12 Clusters')
+                palette=sns.color_palette('hls', 8))
+plt.title('Affinity Prop with 8 Clusters')
 plt.show()
 
 ###################### Agglomerative ######################
@@ -142,11 +143,13 @@ dendro = hierarchy.dendrogram(Z, leaf_rotation=0, leaf_font_size =12, orientatio
 
 from sklearn.cluster import DBSCAN 
 
-db = DBSCAN(eps=11, min_samples=6).fit(X)
+db = DBSCAN(eps=50, min_samples=6).fit(X)
+
+print(db.labels_)
 
 X['Labels'] = db.labels_
 plt.figure(figsize=(12, 8))
-sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
+sns.scatterplot(X['Radius'], X['Absolute Magnitude'], hue=X['Labels'], 
                 palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]))
 plt.title('DBSCAN with epsilon 11, min samples 6')
 plt.show()
@@ -156,7 +159,7 @@ plt.show()
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 # The following bandwidth can be automatically detected using
-bandwidth = estimate_bandwidth(X, quantile=0.2)
+bandwidth = estimate_bandwidth(X, quantile=0.5)
 ms = MeanShift(bandwidth).fit(X)
 
 X['Labels'] = ms.labels_
@@ -166,7 +169,6 @@ sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'],
 plt.plot()
 plt.title('MeanShift')
 plt.show()
-
 
 ###################### Mini Batch K Means ######################
 
@@ -194,52 +196,52 @@ sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'],
 plt.title('Birch with 5 clusters')
 plt.show()
 
-###################### ALL-IN-ONE ######################
+# ###################### ALL-IN-ONE ######################
 
-fig = plt.figure(figsize=(20,15))
+# fig = plt.figure(figsize=(20,15))
 
-##### KMeans #####
-ax = fig.add_subplot(221)
+# ##### KMeans #####
+# ax = fig.add_subplot(221)
 
-km5 = KMeans(n_clusters=5).fit(X)
-X['Labels'] = km5.labels_
-sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
-                palette=sns.color_palette('hls', 5), s=60, ax=ax)
-ax.set_title('KMeans with 5 Clusters')
-
-
-##### Agglomerative Clustering #####
-ax = fig.add_subplot(222)
-
-agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
-X['Labels'] = agglom.labels_
-sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
-                palette=sns.color_palette('hls', 5), s=60, ax=ax)
-ax.set_title('Agglomerative with 5 Clusters')
+# km5 = KMeans(n_clusters=5).fit(X)
+# X['Labels'] = km5.labels_
+# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
+#                 palette=sns.color_palette('hls', 5), s=60, ax=ax)
+# ax.set_title('KMeans with 5 Clusters')
 
 
-##### DBSCAN #####
-ax = fig.add_subplot(223)
+# ##### Agglomerative Clustering #####
+# ax = fig.add_subplot(222)
 
-db = DBSCAN(eps=11, min_samples=6).fit(X)
-X['Labels'] = db.labels_
-sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
-                palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]), ax=ax)
-ax.set_title('DBSCAN with epsilon 11, min samples 6')
+# agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
+# X['Labels'] = agglom.labels_
+# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
+#                 palette=sns.color_palette('hls', 5), s=60, ax=ax)
+# ax.set_title('Agglomerative with 5 Clusters')
 
 
-##### MEAN SHIFT #####
-ax = fig.add_subplot(224)
+# ##### DBSCAN #####
+# ax = fig.add_subplot(223)
 
-bandwidth = estimate_bandwidth(X, quantile=0.1)
-ms = MeanShift(bandwidth).fit(X)
-X['Labels'] = ms.labels_
-sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
-                palette=sns.color_palette('hls', np.unique(ms.labels_).shape[0]), ax=ax)
-ax.set_title('MeanShift')
+# db = DBSCAN(eps=11, min_samples=6).fit(X)
+# X['Labels'] = db.labels_
+# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+#                 palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]), ax=ax)
+# ax.set_title('DBSCAN with epsilon 11, min samples 6')
 
-plt.tight_layout()
-plt.show()
+
+# ##### MEAN SHIFT #####
+# ax = fig.add_subplot(224)
+
+# bandwidth = estimate_bandwidth(X, quantile=0.1)
+# ms = MeanShift(bandwidth).fit(X)
+# X['Labels'] = ms.labels_
+# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+#                 palette=sns.color_palette('hls', np.unique(ms.labels_).shape[0]), ax=ax)
+# ax.set_title('MeanShift')
+
+# plt.tight_layout()
+# plt.show()
 
 ###################### Categorical Variables ######################
 
