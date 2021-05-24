@@ -8,17 +8,24 @@ warnings.filterwarnings('ignore')
 
 trdf = pd.read_csv("./Train.csv")
 trdf.rename(index=str, columns={'Discount_offered': 'Discount',
-                              'Cost_of_the_Product': 'Cost'}, inplace=True)
+                              'Cost_of_the_Product': 'Cost',
+                              'Customer_rating': 'Rating'}, inplace=True)
+
+pd.set_option("display.max_columns", None)
+
+# print(trdf.head())
+
+# print(trdf['Rating'].unique())
 
 X = trdf[['Discount', 'Cost']]
 
-indexnames = X[(X['Discount'] < 10)].index
+indexnames = X[(X['Discount'] < 15)].index
 
 X.drop(indexnames, inplace = True)
 
-X = X.head(750)
+# X = X.head(750)
 
-print(X)
+# print(X)
 
 ###################### KMeans Graph - Elbow ######################
 
@@ -59,7 +66,17 @@ sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'],
 plt.title('KMeans with 3 Clusters')
 plt.show()
 
-# Let's see with 5 Clusters
+# Let's see with 5 Clusters --> Discount to Cost
+km5 = KMeans(n_clusters=5).fit(X)
+
+X['Labels'] = km5.labels_
+plt.figure(figsize=(12, 8))
+sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
+                palette=sns.color_palette('hls', 5))
+plt.title('KMeans with 5 Clusters')
+plt.show()
+
+# Let's see with 5 Clusters --> Cost to Discount
 km5 = KMeans(n_clusters=5).fit(X)
 
 X['Labels'] = km5.labels_
@@ -83,7 +100,7 @@ plt.show()
 
 from sklearn.cluster import OPTICS 
 
-optics = OPTICS(eps=2, min_samples=15).fit(X)
+optics = OPTICS(eps=5000, min_samples=15).fit(X)
 
 print(len(optics.labels_))
 print(len(optics.cluster_hierarchy_))
@@ -91,8 +108,8 @@ print(len(optics.cluster_hierarchy_))
 X['Labels'] = optics.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 12))
-plt.title('OPTICS with 11 Clusters')
+                palette=sns.color_palette('hls', np.unique(optics.labels_).shape[0]))
+plt.title('OPTICS with 14 Clusters')
 plt.show()
 
 
@@ -100,20 +117,22 @@ plt.show()
 
 from sklearn.cluster import AffinityPropagation
 
-affi = AffinityPropagation().fit(X)
+affi = AffinityPropagation(damping=0.9, preference=-20000).fit(X)
+
+print(affi.labels_)
 
 X['Labels'] = affi.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 12))
-plt.title('Affinity Prop with 12 Clusters')
+                palette=sns.color_palette('hls', 9))
+plt.title('Affinity Prop with 9 Clusters')
 plt.show()
 
 ###################### Agglomerative ######################
 
 from sklearn.cluster import AgglomerativeClustering 
 
-agglom = AgglomerativeClustering(n_clusters=5, linkDiscount='averDiscount').fit(X)
+agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
 
 X['Labels'] = agglom.labels_
 plt.figure(figsize=(12, 8))
@@ -129,12 +148,12 @@ from scipy.spatial import distance_matrix
 
 dist = distance_matrix(X, X)
 
-Z = hierarchy.linkDiscount(dist, 'complete')
+Z = hierarchy.linkage(dist, 'complete')
 
 plt.figure(figsize=(18, 50))
 dendro = hierarchy.dendrogram(Z, leaf_rotation=0, leaf_font_size=12, orientation='right')
 
-Z = hierarchy.linkDiscount(dist, 'averDiscount')
+Z = hierarchy.linkage(dist, 'average')
 plt.figure(figsize=(18, 50))
 dendro = hierarchy.dendrogram(Z, leaf_rotation=0, leaf_font_size =12, orientation = 'right')
 
