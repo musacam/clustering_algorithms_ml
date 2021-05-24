@@ -100,7 +100,7 @@ plt.show()
 
 from sklearn.cluster import OPTICS 
 
-optics = OPTICS(eps=5000, min_samples=15).fit(X)
+optics = OPTICS(eps=100, min_samples=35).fit(X)
 
 print(len(optics.labels_))
 print(len(optics.cluster_hierarchy_))
@@ -109,7 +109,7 @@ X['Labels'] = optics.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
                 palette=sns.color_palette('hls', np.unique(optics.labels_).shape[0]))
-plt.title('OPTICS with 14 Clusters')
+plt.title('OPTICS with ' + str(np.unique(optics.labels_).shape[0]) + ' Clusters')
 plt.show()
 
 
@@ -124,8 +124,8 @@ print(affi.labels_)
 X['Labels'] = affi.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 9))
-plt.title('Affinity Prop with 9 Clusters')
+                palette=sns.color_palette('hls', np.unique(affi.labels_).shape[0]))
+plt.title('Affinity Prop with ' + str(np.unique(affi.labels_).shape[0]) + ' Clusters')
 plt.show()
 
 ###################### Agglomerative ######################
@@ -214,49 +214,49 @@ plt.title('Birch with 5 clusters')
 plt.show()
 
 
-###################### ALL-IN-ONE ######################
+# ###################### ALL-IN-ONE ######################
 
-fig = plt.figure(figsize=(20,15))
+# fig = plt.figure(figsize=(20,15))
 
-##### KMeans #####
-ax = fig.add_subplot(221)
+# ##### KMeans #####
+# ax = fig.add_subplot(221)
 
-km5 = KMeans(n_clusters=5).fit(X)
-X['Labels'] = km5.labels_
-sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
-                palette=sns.color_palette('hls', 5), s=60, ax=ax)
-ax.set_title('KMeans with 5 Clusters')
-
-
-##### Agglomerative Clustering #####
-ax = fig.add_subplot(222)
-
-agglom = AgglomerativeClustering(n_clusters=5, linkDiscount='averDiscount').fit(X)
-X['Labels'] = agglom.labels_
-sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
-                palette=sns.color_palette('hls', 5), s=60, ax=ax)
-ax.set_title('Agglomerative with 5 Clusters')
+# km5 = KMeans(n_clusters=5).fit(X)
+# X['Labels'] = km5.labels_
+# sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
+#                 palette=sns.color_palette('hls', 5), s=60, ax=ax)
+# ax.set_title('KMeans with 5 Clusters')
 
 
-##### DBSCAN #####
-ax = fig.add_subplot(223)
+# ##### Agglomerative Clustering #####
+# ax = fig.add_subplot(222)
 
-db = DBSCAN(eps=11, min_samples=6).fit(X)
-X['Labels'] = db.labels_
-sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
-                palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]), ax=ax)
-ax.set_title('DBSCAN with epsilon 11, min samples 6')
+# agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
+# X['Labels'] = agglom.labels_
+# sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
+#                 palette=sns.color_palette('hls', 5), s=60, ax=ax)
+# ax.set_title('Agglomerative with 5 Clusters')
 
 
-##### MEAN SHIFT #####
-ax = fig.add_subplot(224)
+# ##### DBSCAN #####
+# ax = fig.add_subplot(223)
 
-bandwidth = estimate_bandwidth(X, quantile=0.1)
-ms = MeanShift(bandwidth).fit(X)
-X['Labels'] = ms.labels_
-sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
-                palette=sns.color_palette('hls', np.unique(ms.labels_).shape[0]), ax=ax)
-ax.set_title('MeanShift')
+# db = DBSCAN(eps=11, min_samples=6).fit(X)
+# X['Labels'] = db.labels_
+# sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
+#                 palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]), ax=ax)
+# ax.set_title('DBSCAN with epsilon 11, min samples 6')
 
-plt.tight_layout()
-plt.show()
+
+# ##### MEAN SHIFT #####
+# ax = fig.add_subplot(224)
+
+# bandwidth = estimate_bandwidth(X, quantile=0.1)
+# ms = MeanShift(bandwidth).fit(X)
+# X['Labels'] = ms.labels_
+# sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
+#                 palette=sns.color_palette('hls', np.unique(ms.labels_).shape[0]), ax=ax)
+# ax.set_title('MeanShift')
+
+# plt.tight_layout()
+# plt.show()
