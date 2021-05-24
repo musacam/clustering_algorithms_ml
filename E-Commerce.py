@@ -44,10 +44,10 @@ ax.set_xlabel('Clusters')
 ax.set_ylabel('Inertia')
 
 # Annotate arrow
-ax.annotate('Possible Elbow Point', xy=(2, 600000), xytext=(3, 1200000), xycoords='data',          
+ax.annotate('Possible Elbow Point', xy=(2, 1900000), xytext=(3, 3000000), xycoords='data',          
              arrowprops=dict(arrowstyle='->', connectionstyle='arc3', color='blue', lw=2))
 
-ax.annotate('Possible Elbow Point', xy=(3, 400000), xytext=(4, 1000000), xycoords='data',          
+ax.annotate('Possible Elbow Point', xy=(3, 1200000), xytext=(5, 1500000), xycoords='data',          
              arrowprops=dict(arrowstyle='->', connectionstyle='arc3', color='blue', lw=2))
 
 plt.show()
