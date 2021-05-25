@@ -13,6 +13,8 @@ strs.rename(index=str, columns={'L': 'Luminosity',
                                 'R': 'Radius',
                                 'A_M': 'Absolute Magnitude'}, inplace=True)
 
+print(strs.head(20))
+
 X = strs.drop(['Color', 'Spectral_Class'], axis=1)
 sns.pairplot(data=X,hue="Type", palette=sns.color_palette('bright', 6))
 plt.show()
@@ -54,7 +56,7 @@ km3 = KMeans(n_clusters=3).fit(X)
 X['Labels'] = km3.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 3))
+                palette=sns.color_palette('bright', 3))
 plt.title('KMeans with 3 Clusters')
 plt.show()
 
@@ -74,7 +76,7 @@ km10 = KMeans(n_clusters=10).fit(X)
 X['Labels'] = km10.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 10))
+                palette=sns.color_palette('bright', 10))
 plt.title('KMeans with 10 Clusters')
 plt.show()
 
@@ -84,14 +86,11 @@ from sklearn.cluster import OPTICS
 
 optics = OPTICS(eps=0.5, min_samples=20).fit(X)
 
-print(optics.labels_)
-print(optics.cluster_hierarchy_)
-
 X['Labels'] = optics.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 3))
-plt.title('OPTICS with 3 Clusters')
+                palette=sns.color_palette('bright', np.unique(optics.labels_).shape[0]))
+plt.title('OPTICS with ' + str(np.unique(optics.labels_).shape[0]) + ' Clusters')
 plt.show()
 
 
@@ -101,13 +100,11 @@ from sklearn.cluster import AffinityPropagation
 
 affi = AffinityPropagation(damping=0.9).fit(X)
 
-print(affi.cluster_centers_indices_)
-
 X['Labels'] = affi.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 8))
-plt.title('Affinity Prop with 8 Clusters')
+                palette=sns.color_palette('bright', np.unique(affi.labels_).shape[0]))
+plt.title('Affinity Prop with '+ str(np.unique(affi.labels_).shape[0]) + ' Clusters')
 plt.show()
 
 ###################### Agglomerative ######################
@@ -119,8 +116,8 @@ agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
 X['Labels'] = agglom.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 5))
-plt.title('Agglomerative with 5 Clusters')
+                palette=sns.color_palette('bright', 5))
+plt.title('Agglomerative with ' + str(np.unique(agglom.labels_).shape[0]) + ' Clusters')
 plt.show()
 
 ###################### Hierarchy dendogram ######################
@@ -145,13 +142,11 @@ from sklearn.cluster import DBSCAN
 
 db = DBSCAN(eps=50, min_samples=6).fit(X)
 
-print(db.labels_)
-
 X['Labels'] = db.labels_
 plt.figure(figsize=(12, 8))
-sns.scatterplot(X['Radius'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]))
-plt.title('DBSCAN with epsilon 11, min samples 6')
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
+                palette=sns.color_palette('bright', np.unique(db.labels_).shape[0]))
+plt.title('DBSCAN with epsilon 50, min samples 6')
 plt.show()
 
 ###################### MeanShift ######################
@@ -167,7 +162,7 @@ plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
                 palette=sns.color_palette('bright', np.unique(ms.labels_).shape[0]))
 plt.plot()
-plt.title('MeanShift')
+plt.title('MeanShift with' + str(np.unique(ms.labels_).shape[0]) + ' Clusters' )
 plt.show()
 
 ###################### Mini Batch K Means ######################
@@ -179,8 +174,8 @@ mbk = MiniBatchKMeans(n_clusters=5).fit(X)
 X['Labels'] = mbk.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]))
-plt.title('Mini-batch with 5 clusters')
+                palette=sns.color_palette('bright', np.unique(mbk.labels_).shape[0]))
+plt.title('Mini-batch with ' + str(np.unique(mbk.labels_).shape[0]) + ' clusters')
 plt.show()
 
 ###################### Birch ######################
@@ -192,56 +187,101 @@ brch = Birch(threshold=0.01, n_clusters=5).fit(X)
 X['Labels'] = brch.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
-                palette=sns.color_palette('hls', 5))
-plt.title('Birch with 5 clusters')
+                palette=sns.color_palette('bright', np.unique(brch.labels_).shape[0]))
+plt.title('Birch with ' + str(np.unique(brch.labels_).shape[0]) + ' Clusters')
 plt.show()
 
 # ###################### ALL-IN-ONE ######################
 
-# fig = plt.figure(figsize=(20,15))
+fig = plt.figure(figsize=(20,20))
 
-# ##### KMeans #####
-# ax = fig.add_subplot(221)
+a1 = fig.add_subplot(331)
+a2 = fig.add_subplot(332)
+a3 = fig.add_subplot(333)
+a4 = fig.add_subplot(334)
+a5 = fig.add_subplot(335)
+a6 = fig.add_subplot(336)
+a7 = fig.add_subplot(337)
+a8 = fig.add_subplot(338)
+a9 = fig.add_subplot(339)
 
-# km5 = KMeans(n_clusters=5).fit(X)
-# X['Labels'] = km5.labels_
-# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
-#                 palette=sns.color_palette('hls', 5), s=60, ax=ax)
-# ax.set_title('KMeans with 5 Clusters')
+##### KMeans-10 #####
+
+km5 = KMeans(n_clusters=5).fit(X)
+X['Labels'] = km5.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
+                palette=sns.color_palette('bright', 5), s=60, ax=a1)
+a1.set_title('KMeans - 5')
+
+##### KMeans #####
+
+km10 = KMeans(n_clusters=10).fit(X)
+X['Labels'] = km10.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
+                palette=sns.color_palette('bright', 10), s=60, ax=a2)
+a9.set_title('KMeans - 10')
+
+##### Agglomerative Clustering #####
+
+agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
+X['Labels'] = agglom.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
+                palette=sns.color_palette('bright', 5), s=60, ax=a3)
+a2.set_title('Agglomerative')
 
 
-# ##### Agglomerative Clustering #####
-# ax = fig.add_subplot(222)
+##### DBSCAN #####
 
-# agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
-# X['Labels'] = agglom.labels_
-# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'],
-#                 palette=sns.color_palette('hls', 5), s=60, ax=ax)
-# ax.set_title('Agglomerative with 5 Clusters')
-
-
-# ##### DBSCAN #####
-# ax = fig.add_subplot(223)
-
-# db = DBSCAN(eps=11, min_samples=6).fit(X)
-# X['Labels'] = db.labels_
-# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
-#                 palette=sns.color_palette('hls', np.unique(db.labels_).shape[0]), ax=ax)
-# ax.set_title('DBSCAN with epsilon 11, min samples 6')
+db = DBSCAN(eps=50, min_samples=6).fit(X)
+X['Labels'] = db.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+                palette=sns.color_palette('bright', np.unique(db.labels_).shape[0]), ax=a4)
+a3.set_title('DBSCAN')
 
 
-# ##### MEAN SHIFT #####
-# ax = fig.add_subplot(224)
+##### MEAN SHIFT #####
 
-# bandwidth = estimate_bandwidth(X, quantile=0.1)
-# ms = MeanShift(bandwidth).fit(X)
-# X['Labels'] = ms.labels_
-# sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
-#                 palette=sns.color_palette('hls', np.unique(ms.labels_).shape[0]), ax=ax)
-# ax.set_title('MeanShift')
+bandwidth = estimate_bandwidth(X, quantile=0.5)
+ms = MeanShift(bandwidth).fit(X)
+X['Labels'] = ms.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+                palette=sns.color_palette('bright', np.unique(ms.labels_).shape[0]), ax=a5)
+a4.set_title('MeanShift')
 
-# plt.tight_layout()
-# plt.show()
+##### Birch #####
+
+brch = Birch(threshold=0.01, n_clusters=5).fit(X)
+X['Labels'] = brch.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+                palette=sns.color_palette('bright', np.unique(brch.labels_).shape[0]), ax=a6)
+a5.set_title('Birch')
+
+##### Mini Batch K Means #####
+
+mbk = MiniBatchKMeans(n_clusters=5).fit(X)
+X['Labels'] = mbk.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+                palette=sns.color_palette('bright', np.unique(mbk.labels_).shape[0]), ax=a7)
+a6.set_title('Mini-batch')
+
+##### OPTICS #####
+
+optics = OPTICS(eps=0.5, min_samples=20).fit(X)
+X['Labels'] = optics.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+                palette=sns.color_palette('bright', np.unique(optics.labels_).shape[0]), ax=a8)
+a7.set_title('OPTICS')
+
+##### Affinity #####
+
+affi = AffinityPropagation(damping=0.9).fit(X)
+X['Labels'] = affi.labels_
+sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], style=X['Labels'], s=60,
+                palette=sns.color_palette('bright', np.unique(affi.labels_).shape[0]), ax=a9)
+a8.set_title('Affinity')
+
+plt.tight_layout()
+plt.show()
 
 ###################### Categorical Variables ######################
 
@@ -255,7 +295,7 @@ for i in ["yellowish","Yellowish"]:
 for i in ["Orange-Red","Pale yellow orange"]:
     strs.loc[strs["Color"]==i,"Color"]="Orange"
     
-###################### One-Hot Encoding and ML Comparison ######################
+###################### Data Manipulation and ML Comparison ######################
     
 strs=pd.get_dummies(data=strs,columns=["Color","Spectral_Class"],drop_first=True)
 
