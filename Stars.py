@@ -13,13 +13,20 @@ strs.rename(index=str, columns={'L': 'Luminosity',
                                 'R': 'Radius',
                                 'A_M': 'Absolute Magnitude'}, inplace=True)
 
-print(strs.head(20))
+pd.set_option("display.max_columns", None)
 
 X = strs.drop(['Color', 'Spectral_Class'], axis=1)
 sns.pairplot(data=X,hue="Type", palette=sns.color_palette('bright', 6))
 plt.show()
 sns.barplot(x="Type",y="Temperature",data=strs, palette=sns.color_palette('dark', 6))
 plt.show()
+
+###################### Correlation Map ######################
+
+X_1 = strs.drop(['Type', 'Color', 'Spectral_Class'], axis=1)
+print(X_1.head())
+f,ax = plt.subplots(figsize=(14, 14))
+sns.heatmap(X_1.corr(), annot=True, linewidths=.5, fmt= '.1f',ax=ax)
 
 ###################### KMeans Graph - Elbow ######################
 
@@ -60,7 +67,7 @@ sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'],
 plt.title('KMeans with 3 Clusters')
 plt.show()
 
-# Let's see with 5 Clusters
+# Let's see with 6 Clusters
 km6 = KMeans(n_clusters=6).fit(X)
 
 X['Labels'] = km6.labels_
@@ -162,7 +169,7 @@ plt.figure(figsize=(12, 8))
 sns.scatterplot(X['Temperature'], X['Absolute Magnitude'], hue=X['Labels'], 
                 palette=sns.color_palette('bright', np.unique(ms.labels_).shape[0]))
 plt.plot()
-plt.title('MeanShift with' + str(np.unique(ms.labels_).shape[0]) + ' Clusters' )
+plt.title('MeanShift with ' + str(np.unique(ms.labels_).shape[0]) + ' Clusters' )
 plt.show()
 
 ###################### Mini Batch K Means ######################
