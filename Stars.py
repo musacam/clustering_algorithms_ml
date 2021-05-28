@@ -31,10 +31,12 @@ X_1 = strs.drop(['Type', 'Color', 'Spectral_Class'], axis=1)
 f,ax = plt.subplots(figsize=(14, 14))
 sns.heatmap(X_1.corr(), annot=True, linewidths=.5, fmt= '.1f',ax=ax)
 
-###################### PCA Application ######################
+###################### PCA and Normalization Application ######################
 
 print(X)
-from sklearn.preprocessing import StandardScaler
+norm = X.drop(['Type'], axis = 1)
+print(norm.head())
+from sklearn.preprocessing import normalize, StandardScaler
 features = ['Temperature', 'Luminosity', 'Radius', 'Absolute Magnitude']
 # Separating out the features
 x = X.loc[:, features].values
@@ -42,6 +44,11 @@ x = X.loc[:, features].values
 y = X.loc[:,['Type']].values
 # Standardizing the features
 x = StandardScaler().fit_transform(x)
+X_normalized = normalize(x)
+X_normalized = pd.DataFrame(X_normalized)
+X_normalized.columns = norm.columns
+
+print(X_normalized.head())
 
 # After standardization x array
 print(x)
@@ -49,7 +56,7 @@ print(x)
 # Components
 from sklearn.decomposition import PCA
 pca = PCA(n_components=2)
-principalComponents = pca.fit_transform(x)
+principalComponents = pca.fit_transform(X_normalized)
 principalDf = pd.DataFrame(data = principalComponents
              , columns = ['pca1', 'pca2'])
 
@@ -347,7 +354,7 @@ plt.show()
 
 ########## PCA applied data visualization under clustering algorithms ##########
 
-###################### KMeans 3-5-10 PCA ######################
+###################### KMeans 3-5-10 PCA and Norm applied ######################
 
 from sklearn.cluster import KMeans
 
@@ -391,7 +398,7 @@ finalDf['Type'] = optics.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=finalDf['Type'], 
                 palette=sns.color_palette('bright', np.unique(optics.labels_).shape[0]))
-plt.title('OPTICS with ' + str(np.unique(optics.labels_).shape[0]) + ' Clusters')
+plt.title('OPTICS with ' + str(np.unique(optics.labels_).shape[0]) + ' Clusters on PCA applied')
 plt.show()
 
 ###################### Affinity Propagation ######################
@@ -404,7 +411,7 @@ finalDf['Type'] = affi.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=finalDf['Type'], 
                 palette=sns.color_palette('bright', np.unique(affi.labels_).shape[0]))
-plt.title('Affinity Prop with '+ str(np.unique(affi.labels_).shape[0]) + ' Clusters')
+plt.title('Affinity Prop with '+ str(np.unique(affi.labels_).shape[0]) + ' Clusters on PCA applied')
 plt.show()
 
 ###################### Agglomerative ######################
@@ -418,10 +425,10 @@ plt.figure(figsize=(12, 8))
 sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=finalDf['Type'], 
                 palette=sns.color_palette('bright', 5))
 plt.title('Agglomerative with ' +
-          str(np.unique(agglom.labels_).shape[0]) + ' Clusters')
+          str(np.unique(agglom.labels_).shape[0]) + ' Clusters on PCA applied')
 plt.show()
 
-# ###################### Hierarchy dendogram ######################
+###################### Hierarchy dendogram ######################
 
 from scipy.cluster import hierarchy 
 from scipy.spatial import distance_matrix 
@@ -447,7 +454,7 @@ finalDf['Type'] = db.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=finalDf['Type'], 
                 palette=sns.color_palette('bright', np.unique(db.labels_).shape[0]))
-plt.title('DBSCAN with epsilon 50, min samples 6')
+plt.title('DBSCAN with epsilon 50, min samples 6 on PCA applied')
 plt.show()
 
 ###################### MeanShift ######################
@@ -463,7 +470,7 @@ plt.figure(figsize=(12, 8))
 sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=finalDf['Type'], 
                 palette=sns.color_palette('bright', np.unique(ms.labels_).shape[0]))
 plt.plot()
-plt.title('MeanShift with ' + str(np.unique(ms.labels_).shape[0]) + ' Clusters' )
+plt.title('MeanShift with ' + str(np.unique(ms.labels_).shape[0]) + ' Clusters on PCA applied' )
 plt.show()
 
 ###################### Mini Batch K Means ######################
@@ -476,7 +483,7 @@ finalDf['Type'] = mbk.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=finalDf['Type'], 
                 palette=sns.color_palette('bright', np.unique(mbk.labels_).shape[0]))
-plt.title('Mini-batch with ' + str(np.unique(mbk.labels_).shape[0]) + ' clusters')
+plt.title('Mini-batch with ' + str(np.unique(mbk.labels_).shape[0]) + ' clusters on PCA applied')
 plt.show()
 
 ###################### Birch ######################
@@ -489,7 +496,90 @@ finalDf['Type'] = brch.labels_
 plt.figure(figsize=(12, 8))
 sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=finalDf['Type'], 
                 palette=sns.color_palette('bright', np.unique(brch.labels_).shape[0]))
-plt.title('Birch with ' + str(np.unique(brch.labels_).shape[0]) + ' Clusters')
+plt.title('Birch with ' + str(np.unique(brch.labels_).shape[0]) + ' Clusters on PCA applied')
+plt.show()
+
+###################### ALL-IN-ONE PCA Data ######################
+
+fig = plt.figure(figsize=(20,20))
+
+a1 = fig.add_subplot(331)
+a2 = fig.add_subplot(332)
+a3 = fig.add_subplot(333)
+a4 = fig.add_subplot(334)
+a5 = fig.add_subplot(335)
+a6 = fig.add_subplot(336)
+a7 = fig.add_subplot(337)
+a8 = fig.add_subplot(338)
+a9 = fig.add_subplot(339)
+
+##### KMeans-5 #####
+
+km5 = KMeans(n_clusters=5).fit(X)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=km5.labels_, style=km5.labels_,
+                palette=sns.color_palette('bright', 5), s=60, ax=a1)
+a1.set_title('KMeans - 5')
+
+##### KMeans-10 #####
+
+km10 = KMeans(n_clusters=10).fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=km10.labels_, style=km10.labels_,
+                palette=sns.color_palette('bright', 10), s=60, ax=a2)
+a2.set_title('KMeans - 10')
+
+##### Agglomerative Clustering #####
+
+agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=agglom.labels_, style=agglom.labels_,
+                palette=sns.color_palette('bright', 5), s=60, ax=a3)
+a3.set_title('Agglomerative')
+
+
+##### DBSCAN #####
+
+db = DBSCAN(eps=50, min_samples=6).fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=db.labels_, style=db.labels_, s=60,
+                palette=sns.color_palette('bright', np.unique(db.labels_).shape[0]), ax=a4)
+a4.set_title('DBSCAN')
+
+
+##### MEAN SHIFT #####
+
+bandwidth = estimate_bandwidth(finalDf, quantile=0.5)
+ms = MeanShift(bandwidth).fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=ms.labels_, style=ms.labels_, s=60,
+                palette=sns.color_palette('bright', np.unique(ms.labels_).shape[0]), ax=a5)
+a5.set_title('MeanShift')
+
+##### Birch #####
+
+brch = Birch(threshold=0.01, n_clusters=5).fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=brch.labels_, style=brch.labels_, s=60,
+                palette=sns.color_palette('bright', np.unique(brch.labels_).shape[0]), ax=a6)
+a6.set_title('Birch')
+
+##### Mini Batch K Means #####
+
+mbk = MiniBatchKMeans(n_clusters=5).fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=mbk.labels_, style=mbk.labels_, s=60,
+                palette=sns.color_palette('bright', np.unique(mbk.labels_).shape[0]), ax=a7)
+a7.set_title('Mini-batch')
+
+##### OPTICS #####
+
+optics = OPTICS(eps=0.5, min_samples=20).fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=optics.labels_, style=optics.labels_, s=60,
+                palette=sns.color_palette('bright', np.unique(optics.labels_).shape[0]), ax=a8)
+a8.set_title('OPTICS')
+
+##### Affinity #####
+
+affi = AffinityPropagation(damping=0.9).fit(finalDf)
+sns.scatterplot(finalDf['pca1'], finalDf['pca2'], hue=affi.labels_, style=affi.labels_, s=60,
+                palette=sns.color_palette('bright', np.unique(affi.labels_).shape[0]), ax=a9)
+a9.set_title('Affinity')
+
+plt.tight_layout()
 plt.show()
 
 ###################### Categorical Variables ######################
