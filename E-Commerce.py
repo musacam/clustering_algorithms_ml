@@ -13,7 +13,7 @@ trdf.rename(index=str, columns={'Discount_offered': 'Discount',
 
 pd.set_option("display.max_columns", None)
 
-# print(trdf.head())
+print(trdf.head())
 
 # print(trdf['Rating'].unique())
 
@@ -223,7 +223,7 @@ a7 = fig.add_subplot(337)
 a8 = fig.add_subplot(338)
 a9 = fig.add_subplot(339)
 
-##### KMeans-10 #####
+##### KMeans-5 #####
 
 km5 = KMeans(n_clusters=5).fit(X)
 X['Labels'] = km5.labels_
@@ -231,13 +231,13 @@ sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
                 palette=sns.color_palette('bright', 5), s=60, ax=a1)
 a1.set_title('KMeans - 5')
 
-##### KMeans #####
+##### KMeans-10 #####
 
 km10 = KMeans(n_clusters=10).fit(X)
 X['Labels'] = km10.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
                 palette=sns.color_palette('bright', 10), s=60, ax=a2)
-a9.set_title('KMeans - 10')
+a2.set_title('KMeans - 10')
 
 ##### Agglomerative Clustering #####
 
@@ -245,7 +245,7 @@ agglom = AgglomerativeClustering(n_clusters=5, linkage='average').fit(X)
 X['Labels'] = agglom.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'],
                 palette=sns.color_palette('bright', 5), s=60, ax=a3)
-a2.set_title('Agglomerative')
+a3.set_title('Agglomerative')
 
 
 ##### DBSCAN #####
@@ -254,7 +254,7 @@ db = DBSCAN(eps=11, min_samples=6).fit(X)
 X['Labels'] = db.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
                 palette=sns.color_palette('bright', np.unique(db.labels_).shape[0]), ax=a4)
-a3.set_title('DBSCAN')
+a4.set_title('DBSCAN')
 
 
 ##### MEAN SHIFT #####
@@ -264,7 +264,7 @@ ms = MeanShift(bandwidth).fit(X)
 X['Labels'] = ms.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
                 palette=sns.color_palette('bright', np.unique(ms.labels_).shape[0]), ax=a5)
-a4.set_title('MeanShift')
+a5.set_title('MeanShift')
 
 ##### Birch #####
 
@@ -272,7 +272,7 @@ brch = Birch(threshold=0.01, n_clusters=5).fit(X)
 X['Labels'] = brch.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
                 palette=sns.color_palette('bright', np.unique(brch.labels_).shape[0]), ax=a6)
-a5.set_title('Birch')
+a6.set_title('Birch')
 
 ##### Mini Batch K Means #####
 
@@ -280,7 +280,7 @@ mbk = MiniBatchKMeans(n_clusters=5).fit(X)
 X['Labels'] = mbk.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
                 palette=sns.color_palette('bright', np.unique(mbk.labels_).shape[0]), ax=a7)
-a6.set_title('Mini-batch')
+a7.set_title('Mini-batch')
 
 ##### OPTICS #####
 
@@ -288,7 +288,7 @@ optics = OPTICS(eps=100, min_samples=35).fit(X)
 X['Labels'] = optics.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
                 palette=sns.color_palette('bright', np.unique(optics.labels_).shape[0]), ax=a8)
-a7.set_title('OPTICS')
+a8.set_title('OPTICS')
 
 ##### Affinity #####
 
@@ -296,7 +296,7 @@ affi = AffinityPropagation(damping=0.9, preference=-20000).fit(X)
 X['Labels'] = affi.labels_
 sns.scatterplot(X['Discount'], X['Cost'], hue=X['Labels'], style=X['Labels'], s=60,
                 palette=sns.color_palette('bright', np.unique(affi.labels_).shape[0]), ax=a9)
-a8.set_title('Affinity')
+a9.set_title('Affinity')
 
 plt.tight_layout()
 plt.show()
