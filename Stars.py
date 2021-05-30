@@ -197,9 +197,12 @@ from scipy.spatial import distance_matrix
 dist = distance_matrix(X, X)
 
 Z = hierarchy.linkage(dist, 'complete')
-
 plt.figure(figsize=(18, 50))
 dendro = hierarchy.dendrogram(Z, leaf_rotation=0, leaf_font_size=12, orientation='right')
+
+Z = hierarchy.linkage(dist, 'single')
+plt.figure(figsize=(18, 50))
+dendro = hierarchy.dendrogram(Z, leaf_rotation=0, leaf_font_size =12, orientation = 'right')
 
 Z = hierarchy.linkage(dist, 'average')
 plt.figure(figsize=(18, 50))
