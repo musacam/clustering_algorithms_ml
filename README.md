@@ -3,7 +3,7 @@
  Comparison made on small dataset (which is Star Classification dataset with 240 row) and large dataset (E-Commerce shipping dataset with over 10k row).
  Comparison made on PCA applied data and raw data.
  
- ## Following clustering algorithms have implemented:
+ ## Following clustering algorithms have been implemented:
  - K-Means
  - OPTICS
  - Affinity Propagation
